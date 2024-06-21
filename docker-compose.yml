@@ -6,8 +6,8 @@ services:
       context: ./
       dockerfile: docker/php/DockerFile
     container_name: dewtech-app
-    restart: always
-    working_dir: /var/www/
+    #restart: always
+    working_dir: /var/www/application
     volumes:
       - ./:/var/www
       - ./application:/var/www/application
@@ -15,10 +15,11 @@ services:
       - COMPOSER_HOME=/composer
       - COMPOSER_ALLOW_SUPERUSER=1
       - APP_ENV=local
-      - APP_KEY=base64:V9lMOMKFhL7IdZ9/3KcjtT24SIqRw+Oz7ObmYy9YvJQ=
     depends_on:
       - db
       - redis
+    networks:
+      - network
 
   nginx:
     image: nginx:1.25.1-alpine-slim
@@ -27,9 +28,11 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./:/var/www
+      - ./:/var/www/application
       - ./application:/var/www/application
       - ./docker/nginx:/etc/nginx/conf.d
+    networks:
+      - network
 
   redis:
     build:
@@ -41,6 +44,8 @@ services:
       - "6379:6379"
     volumes:
       - redis:/data
+    networks:
+      - network
   db:
     build:
       context: ./
@@ -55,7 +60,12 @@ services:
       - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - network
 
 volumes:
   redis:
   db:
+networks:
+  network:
+    driver: bridge
