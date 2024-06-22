@@ -5,8 +5,8 @@ services:
     build:
       context: ./
       dockerfile: docker/php/DockerFile
-    container_name: dewtech-app
-    #restart: always
+    container_name: laravel
+    restart: always
     working_dir: /var/www/application
     volumes:
       - ./:/var/www
@@ -23,7 +23,7 @@ services:
 
   nginx:
     image: nginx:1.25.1-alpine-slim
-    container_name: dewtech-nginx
+    container_name: nginx
     restart: always
     ports:
       - "8000:80"
@@ -38,7 +38,7 @@ services:
     build:
       context: ./
       dockerfile: docker/redis/DockerFile
-    container_name: dewtech-redis
+    container_name: redis
     restart: always
     ports:
       - "6379:6379"
@@ -50,7 +50,7 @@ services:
     build:
       context: ./
       dockerfile: docker/db/DockerFile
-    container_name: dewtech-db
+    container_name: db
     restart: always
     environment:
       - POSTGRES_DB=postgres
