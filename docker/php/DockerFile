@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm
 
-WORKDIR /var/www/application
+WORKDIR /var/www/application/
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -37,28 +37,18 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 
 COPY ../../application /var/www/application
 
-RUN composer install 
-RUN composer update
-
-COPY ./application/.env.example /var/www/application/.env
-
-ENV APP_ENV=local
-ENV APP_DEBUG=true
-
-RUN php artisan key:generate
-
-# RUN sed -i 's/APP_DEBUG=false/APP_DEBUG=true/g' /var/www/application/.env
-
-#instala e build
-RUN npm install && npm run build
-
-# Copy existing application directory permissions
-COPY --chown=www:www . /var/www
-
 # Ajuste de permissões
 RUN chown -R www-data:www-data /var/www/application
 RUN chmod -R 777 /var/www/application/public
 RUN chmod -R 777 /var/www/application/storage
+
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+#instala e builda
+RUN npm install && npm run build
+
+# Copy existing application directory permissions
+COPY --chown=www:www . /var/www
 
 # Change current user to www
 USER www
