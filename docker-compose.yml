@@ -1,71 +1,71 @@
 version: "3.8"
 
 services:
-  app:
-    build:
-      context: ./
-      dockerfile: docker/php/DockerFile
-    container_name: laravel
-    restart: always
-    working_dir: /var/www/application
-    volumes:
-     #- ./:/var/www
-      - ./application:/var/www/application
-    environment:
-      - COMPOSER_HOME=/composer
-      - COMPOSER_ALLOW_SUPERUSER=1
-      - APP_ENV=local
-    depends_on:
-      - db
-      - redis
-    networks:
-      - network
-
-  nginx:
-    image: nginx:1.25.1-alpine-slim
-    container_name: nginx
-    restart: always
-    ports:
-      - "80:80"
-    volumes:
-      #- ./:/var/www/application
-      - ./application:/var/www/application
-      - ./docker/nginx:/etc/nginx/conf.d
-    networks:
-      - network
-
-  redis:
-    build:
-      context: ./
-      dockerfile: docker/redis/DockerFile
-    container_name: redis
-    restart: always
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis:/data
-    networks:
-      - network
-  db:
-    build:
-      context: ./
-      dockerfile: docker/db/DockerFile
-    container_name: db
-    restart: always
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - db:/var/lib/postgresql/data
-    networks:
-      - network
+    app:
+        build:
+            context: ./
+            dockerfile: docker/php/DockerFile
+        container_name: laravel
+        restart: always
+        working_dir: /var/www/application
+        volumes:
+            #- ./:/var/www
+            - ./application:/var/www/application
+        environment:
+            - COMPOSER_HOME=/composer
+            - COMPOSER_ALLOW_SUPERUSER=1
+            - APP_ENV=local
+        depends_on:
+            - db
+            - redis
+        networks:
+            - network
+    
+    nginx:
+        image: nginx:1.25.1-alpine-slim
+        container_name: nginx
+        restart: always
+        ports:
+            - "80:80"
+        volumes:
+            #- ./:/var/www/application
+            - ./application:/var/www/application
+            - ./docker/nginx:/etc/nginx/conf.d
+        networks:
+            - network
+    
+    redis:
+        build:
+            context: ./
+            dockerfile: docker/redis/DockerFile
+        container_name: redis
+        restart: always
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis:/data
+        networks:
+            - network
+    db:
+        build:
+            context: ./
+            dockerfile: docker/db/DockerFile
+        container_name: db
+        restart: always
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - "5432:5432"
+        volumes:
+            - db:/var/lib/postgresql/data
+        networks:
+            - network
 
 volumes:
-  redis:
-  db:
+    redis:
+    db:
 networks:
-  network:
-    driver: bridge
+    network:
+        driver: bridge
